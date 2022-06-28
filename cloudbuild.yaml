@@ -1,0 +1,70 @@
+steps:
+  - name: 'gcr.io/openmarket-353507/sonar-scanner:latest'
+    args:
+    - '-Dsonar.host.url=https://sonarcloud.io'
+    - '-Dsonar.login=sandra.lozanosanchez@gmail.com'
+    - '-Dsonar.projectKey=7405d1aff9c22c831c16d58b1ff97c85467195be'
+    - '-Dsonar.organization=sandraLoz'
+    - '-Dsonar.sources=.'
+ 
+  # Docker Auth
+  - name: Docker Auth
+    run: |-
+         gcloud auth configure-docker --quiet
+         gcloud auth configure-docker europe-southwest1-docker.pkg.dev --quiet
+    
+  # Docker Build
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 
+           'eu.gcr.io/openmarket-353507/hellosonar:${{ github.sha }}', "--build-arg=JAR_FILE=target/hellosonar-1.0.0.jar", "."]
+  #   args: ["build", "-t", "gcr.io/$PROJECT_ID/hellospring", "--build-arg=JAR_FILE=target/hello-spring-1.0.0.jar", "."]
+  #   docker build -t "eu.gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}" ./
+  #   docker push "eu.gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
+  
+  # Docker Push
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 
+           'eu.gcr.io/openmarket-353507/hellosonar:${{ github.sha }}']
+images: ["gcr.io/$PROJECT_ID/hellospring"]
+  
+
+  # Entrypoint, timeout and environment variables
+  # - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  #   entrypoint: 'gcloud'
+  #  timeout: 240s
+  # args: ['compute', 'instances', 
+  #         'create-with-container', 'my-vm-name',
+  #         '--container-image', 
+  #         'us-central1-docker.pkg.dev/${PROJECT_ID}/my-docker-repo/myimage']
+  #   env:
+  #     - 'CLOUDSDK_COMPUTE_REGION=us-central1'
+  #     - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  # tags: ['cloud-builders-community']
+
+
+# substitutions:
+#         _CLOUDSDK_COMPUTE_ZONE: europe-southwest1-a  
+#         _CLOUDSDK_CONTAINER_CLUSTER: $_CLOUDSDK_CONTAINER_CLUSTER
+#         _CLOUDSDK_COMPUTE_REGION: europe-southwest1
+#     steps:
+#     - name: gcr.io/$PROJECT_ID/sonar-scanner:latest
+#       entrypoint: 'bash'
+#       args:
+#       - '-c'
+#       - 'if [ $BRANCH_NAME != 'production' ]; then sonar-scanner -Dsonar.host.url=https://sonar.test.io -Dsonar.login=${_SONAR_LOGIN} -Dsonar.projectKey=service -Dsonar.sources=. ; fi'
+#     - id: 'build test-service image'
+#       name: 'gcr.io/cloud-builders/docker'
+#       args: ['build', '-t', 'gcr.io/$PROJECT_ID/$REPO_NAME/$BRANCH_NAME:$SHORT_SHA', '.']
+#     - id: 'push test-service image'
+#       name: 'gcr.io/cloud-builders/docker'
+#       args: ['push', 'gcr.io/$PROJECT_ID/$REPO_NAME/$BRANCH_NAME:$SHORT_SHA']
+#     - id: 'set test-service image in yamls'
+#       name: 'ubuntu'
+#       args: ['bash','-c','sed -i "s,TEST_SERVICE,gcr.io/$PROJECT_ID/$REPO_NAME/$BRANCH_NAME:$SHORT_SHA," k8s/*.yaml']
+#     - id: kubectl-apply
+#       name: 'gcr.io/cloud-builders/kubectl'
+#       args: ['apply', '-f', 'k8s/']
+#       env:
+#       - 'CLOUDSDK_COMPUTE_ZONE=${_CLOUDSDK_COMPUTE_ZONE}'
+#       - 'CLOUDSDK_CONTAINER_CLUSTER=${_CLOUDSDK_CONTAINER_CLUSTER}'
+#     images: ['gcr.io/$PROJECT_ID/$REPO_NAME/$BRANCH_NAME:$SHORT_SHA']
