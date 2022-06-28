@@ -25,7 +25,7 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 
            'eu.gcr.io/openmarket-353507/hellosonar:${{ github.sha }}']
-images: ["gcr.io/$PROJECT_ID/hellospring"]
+images: ["gcr.io/openmarket-353507/hellosonar"]
   
 
   # Entrypoint, timeout and environment variables
