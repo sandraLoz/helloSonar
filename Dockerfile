@@ -18,7 +18,7 @@ RUN mvn package -DskipTests
 # Stage 2: run the previously built JAR file
 FROM adoptopenjdk/openjdk13:alpine-slim
 
-COPY --from=builder /app/target/hello-*.jar /hellosonar.jar
+COPY --from=builder /app/target/hello*.jar /hellosonar.jar
 
 # Run the web service on container startup.
 CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dserver.port=8080","-jar","/hellosonar.jar"]
