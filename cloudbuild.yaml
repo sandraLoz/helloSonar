@@ -16,7 +16,7 @@ steps:
   # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 
-           'eu.gcr.io/openmarket-353507/hellosonar:${{ github.sha }}', "--build-arg=JAR_FILE=target/hellosonar-1.0.0.jar", "."]
+           'eu.gcr.io/openmarket-353507/hellosonar:${{ github.sha }}', "--build-arg=JAR_FILE=target/helloSonar-0.0.1-SNAPSHOT.jar", "."]
   #   args: ["build", "-t", "gcr.io/$PROJECT_ID/hellospring", "--build-arg=JAR_FILE=target/hello-spring-1.0.0.jar", "."]
   #   docker build -t "eu.gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}" ./
   #   docker push "eu.gcr.io/${{ env.PROJECT_ID }}/${{ env.SERVICE }}:${{ github.sha }}"
